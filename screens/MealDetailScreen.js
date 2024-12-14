@@ -1,25 +1,35 @@
-import { useContext, useLayoutEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { useContext, useLayoutEffect } from "react";
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 
-import IconButton from '../components/IconButton';
-import List from '../components/MealDetail/List';
-import Subtitle from '../components/MealDetail/Subtitle';
-import MealDetails from '../components/MealDetails';
-import { MEALS } from '../data/dummy-data';
-import { FavoritesContext } from '../store/context/favorites-context';
+import IconButton from "../components/IconButton";
+import List from "../components/MealDetail/List";
+import Subtitle from "../components/MealDetail/Subtitle";
+import MealDetails from "../components/MealDetails";
+import { MEALS } from "../data/dummy-data";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../store/redux/favorites";
+// import { FavoritesContext } from '../store/context/favorites-context';
 
 function MealDetailScreen({ route, navigation }) {
-  const favoriteMealCtx = useContext(FavoritesContext); 
+  // const favoriteMealCtx = useContext(FavoritesContext);
+  const favoritesMealsIds = useSelector((state) => state.favoritesMeals.ids);
+  const dispatch = useDispatch();
   const mealId = route.params.mealId;
-  const mealIsFavorite = favoriteMealCtx.ids.includes(mealId);
+  const mealIsFavorite = favoritesMealsIds.includes(mealId);
 
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
   function changeFavoritesStatus() {
-     if(mealIsFavorite){
-      favoriteMealCtx.removeFavorites(mealId);
-    }else{
-      favoriteMealCtx.addFavorites(mealId);
+    if (mealIsFavorite) {
+      dispatch(
+        removeFavorite({
+          id: mealId,
+        })
+      );
+      // favoriteMealCtx.removeFavorites(mealId);
+    } else {
+      dispatch(addFavorite({ id: mealId }));
+      // favoriteMealCtx.addFavorites(mealId);
     }
   }
 
@@ -66,23 +76,23 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 350,
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 24,
     margin: 8,
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
   },
   detailText: {
-    color: 'white',
+    color: "white",
   },
   listOuterContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   listContainer: {
-    width: '80%',
+    width: "80%",
   },
 });
